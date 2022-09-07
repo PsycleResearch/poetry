@@ -48,6 +48,10 @@
         "indexed": {
           "type": "boolean",
           "description": "For PEP 503 simple API repositories, pre-fetch and index the available packages. (experimental)"
+        },
+        "type": {
+          "type": "string",
+          "description": "Force the type of the source"
         }
       }
     }

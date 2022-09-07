@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from poetry.core.packages.package import Package
     from tomlkit.toml_document import TOMLDocument
 
+    from poetry.repositories.pypi_repository import PyPiRepository
     from poetry.repositories.legacy_repository import LegacyRepository
     from poetry.utils.dependency_specification import DependencySpec
 
@@ -170,8 +171,9 @@ class Factory(BaseFactory):
     @classmethod
     def create_package_source(
         cls, source: dict[str, str], auth_config: Config, disable_cache: bool = False
-    ) -> LegacyRepository:
+    ) -> LegacyRepository | PyPiRepository:
         from poetry.repositories.legacy_repository import LegacyRepository
+        from poetry.repositories.pypi_repository import PyPiRepository
         from poetry.repositories.single_page_repository import SinglePageRepository
 
         if "url" not in source:
@@ -183,10 +185,13 @@ class Factory(BaseFactory):
         name = source["name"]
         url = source["url"]
 
-        repository_class = LegacyRepository
+        if source["type"] == "pypi":
+            repository_class = PyPiRepository
+        else:
+            repository_class = LegacyRepository
 
-        if re.match(r".*\.(htm|html)$", url):
-            repository_class = SinglePageRepository
+            if re.match(r".*\.(htm|html)$", url):
+                repository_class = SinglePageRepository
 
         return repository_class(
             name,

@@ -14,6 +14,7 @@ from poetry.core.packages.package import Package
 from poetry.core.packages.utils.link import Link
 from poetry.core.semver.version import Version
 from poetry.core.version.exceptions import InvalidVersion
+from poetry.config.config import Config
 
 from poetry.repositories.exceptions import PackageNotFound
 from poetry.repositories.http import HTTPRepository
@@ -34,13 +35,13 @@ if TYPE_CHECKING:
 class PyPiRepository(HTTPRepository):
     def __init__(
         self,
+        name: str = "PyPI",
         url: str = "https://pypi.org/",
+        config: Config | None = None,
         disable_cache: bool = False,
         fallback: bool = True,
     ) -> None:
-        super().__init__(
-            "PyPI", url.rstrip("/") + "/simple/", disable_cache=disable_cache
-        )
+        super().__init__(name, url.rstrip("/") + "/simple/", config, disable_cache)
 
         self._base_url = url
         self._fallback = fallback

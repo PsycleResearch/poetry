@@ -30,6 +30,7 @@ class SourceAddCommand(Command):
             "you add other sources.",
         ),
         option("secondary", "s", "Set this source as secondary."),
+        option("type", "t", "Set the source type (legacy or pypi json-compliant)"),
     ]
 
     def handle(self) -> int:
@@ -41,6 +42,7 @@ class SourceAddCommand(Command):
         url = self.argument("url")
         is_default = self.option("default")
         is_secondary = self.option("secondary")
+        source_type = self.option("type")
 
         if is_default and is_secondary:
             self.line_error(
@@ -50,7 +52,11 @@ class SourceAddCommand(Command):
             return 1
 
         new_source: Source | None = Source(
-            name=name, url=url, default=is_default, secondary=is_secondary
+            name=name,
+            url=url,
+            default=is_default,
+            secondary=is_secondary,
+            type=source_type,
         )
         existing_sources = self.poetry.get_sources()
 
